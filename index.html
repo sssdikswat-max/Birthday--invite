@@ -12,6 +12,10 @@
             --shadow: rgba(220, 110, 80, 0.3);
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -24,11 +28,22 @@
             overflow: hidden;
         }
 
+        /* Container to keep everything scaled nicely */
+        .container {
+            position: relative;
+            width: 90%;
+            max-width: 380px;
+            height: 280px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         /* Envelope Wrapper */
         .envelope-wrapper {
             position: relative;
-            width: 380px;
-            height: 280px;
+            width: 100%;
+            height: 100%;
             cursor: pointer;
             transform-style: preserve-3d;
             transition: transform 0.5s ease;
@@ -36,53 +51,71 @@
 
         /* The Base Envelope */
         .envelope {
-            position: relative;
+            position: absolute;
             width: 100%;
             height: 100%;
             background-color: var(--env-color);
-            box-shadow: 0 20px 40px var(--shadow);
+            box-shadow: 0 15px 35px var(--shadow);
             border-bottom-left-radius: 6px;
             border-bottom-right-radius: 6px;
+            z-index: 2;
         }
 
-        /* Front Flaps of Envelope */
+        /* Front Bottom Flap */
         .envelope::before {
             content: '';
             position: absolute;
-            top: 0;
+            bottom: 0;
+            left: 0;
             z-index: 3;
             border-left: 190px solid transparent;
             border-right: 190px solid transparent;
             border-bottom: 140px solid var(--env-inside);
-            border-top: 140px solid transparent;
             border-bottom-left-radius: 6px;
             border-bottom-right-radius: 6px;
+            width: 100%;
+        }
+        @media(max-width: 420px) {
+            .envelope::before {
+                border-left-width: calc(100vw * 0.45);
+                border-right-width: calc(100vw * 0.45);
+                border-bottom-width: 140px;
+            }
         }
 
-        /* Side Flaps */
+        /* Side Left Flap */
         .envelope::after {
             content: '';
             position: absolute;
             top: 0;
+            left: 0;
             z-index: 4;
             border-top: 140px solid transparent;
             border-bottom: 140px solid transparent;
             border-left: 190px solid var(--env-color);
-            border-right: 190px solid transparent;
+            border-bottom-left-radius: 6px;
+        }
+        @media(max-width: 420px) {
+            .envelope::after {
+                border-left-width: calc(100vw * 0.45);
+            }
         }
 
-        /* Symmetric Right Flap */
+        /* Side Right Flap */
         .right-flap {
             position: absolute;
             top: 0;
-            width: 0;
-            height: 0;
+            right: 0;
             z-index: 4;
             border-top: 140px solid transparent;
             border-bottom: 140px solid transparent;
             border-right: 190px solid var(--env-color);
-            border-left: 190px solid transparent;
-            right: 0;
+            border-bottom-right-radius: 6px;
+        }
+        @media(max-width: 420px) {
+            .right-flap {
+                border-right-width: calc(100vw * 0.45);
+            }
         }
 
         /* Top Lid/Flap */
@@ -90,7 +123,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 0;
+            width: 100%;
             height: 0;
             border-left: 190px solid transparent;
             border-right: 190px solid transparent;
@@ -99,15 +132,22 @@
             transition: transform 0.4s ease-in-out, z-index 0.2s ease-in-out;
             z-index: 5;
         }
+        @media(max-width: 420px) {
+            .lid {
+                border-left-width: calc(100vw * 0.45);
+                border-right-width: calc(100vw * 0.45);
+                border-top-width: 140px;
+            }
+        }
 
         /* Heart Seal */
         .heart-seal {
             position: absolute;
-            top: 120px;
+            top: 115px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 6;
-            font-size: 28px;
+            font-size: 32px;
             transition: opacity 0.3s ease;
         }
 
@@ -120,15 +160,17 @@
             height: 90%;
             background: #fff;
             border-radius: 8px;
-            z-index: 2;
+            z-index: 1;
             transition: transform 0.6s ease-in-out, box-shadow 0.6s ease-in-out;
             overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
         .card img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            background-color: #fff;
         }
 
         /* --- Click Active States --- */
@@ -143,13 +185,20 @@
         }
 
         .envelope-wrapper.open .card {
-            transform: translateY(-260px) scale(1.35);
+            transform: translateY(-160px) scale(1.15);
             z-index: 10;
-            box-shadow: 0 30px 60px rgba(220, 110, 80, 0.4);
-            height: 140%;
+            box-shadow: 0 20px 40px rgba(220, 110, 80, 0.4);
+            height: 150%;
+        }
+
+        @media(max-width: 420px) {
+            .envelope-wrapper.open .card {
+                transform: translateY(-140px) scale(1.1);
+                height: 160%;
+            }
         }
         
-        /* Subtle Pulsing Hint */
+        /* Pulse Hint */
         @keyframes pulse {
             0% { transform: translateX(-50%) scale(1); }
             50% { transform: translateX(-50%) scale(1.15); }
@@ -162,14 +211,16 @@
 </head>
 <body>
 
-    <div class="envelope-wrapper" onclick="toggleEnvelope()">
-        <div class="lid"></div>
-        <div class="heart-seal">❤️</div>
-        <div class="envelope">
-            <div class="right-flap"></div>
-        </div>
-        <div class="card">
-            <img src="1000097555.jpg" alt="Swati's Birthday Invitation">
+    <div class="container">
+        <div class="envelope-wrapper" onclick="toggleEnvelope()">
+            <div class="lid"></div>
+            <div class="heart-seal">❤️</div>
+            <div class="envelope">
+                <div class="right-flap"></div>
+            </div>
+            <div class="card">
+                <img src="1000097555.jpg" alt="Swati's Birthday Invitation">
+            </div>
         </div>
     </div>
 
